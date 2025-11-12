@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elmich - Học Đường Xanh</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải thư viện Icon Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Thiết lập font Inter mặc định */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7; /* Nền nhẹ nhàng */
+        }
+        .header-nav-link {
+            position: relative;
+            padding: 8px 0;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        .header-nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #8cc63f; /* Màu xanh lá cây */
+            transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+        }
+        .header-nav-link:hover::after, .header-nav-link.active::after {
+            width: 100%;
+            left: 0;
+        }
+        .header-nav-link:hover {
+             color: #8cc63f;
+        }
+
+        /* Gradient for primary button */
+        .btn-primary {
+            background: linear-gradient(90deg, #8cc63f 0%, #4c960c 100%);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 15px -3px rgba(140, 198, 63, 0.5), 0 4px 6px -2px rgba(140, 198, 63, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Icon size for lucide icons */
+        .icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 1.5;
+        }
+
+        /* --- Custom Styles for Slider --- */
+        .slider-track {
+            display: flex;
+            transition: transform 0.6s ease-in-out; /* Hiệu ứng trượt */
+        }
+        .slide {
+            flex: 0 0 100%; /* Mỗi slide chiếm trọn 100% chiều rộng container */
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+/*            background: rgba(0, 0, 0, 0.4);  Dark overlay */
+            pointer-events: none;
+        }
+
+        /* Custom background images for slides */
+        #slide-1 { background-image: url('https://elmich.vn/demo/hdx.jpg'); }
+        #slide-2 { background-image: url('https://elmich.vn/demo/hdx-slide-01.jpg'); }
+        #slide-3 { background-image: url('https://elmich.vn/demo/hdx-slide-02.jpg'); }
+        #slide-4 { background-image: url('https://elmich.vn/demo/hdx-slide-03.jpg'); }
+        #slide-5 { background-image: url('https://elmich.vn/demo/hdx-slide-05.jpg'); }
+
+        .dot-indicator.active {
+            background-color: #8cc63f; /* Màu xanh lá cây đậm khi active */
+            width: 32px; /* Kéo dài chấm active */
+        }
+        .tree-counter-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4);
+        }
+                /* Youtube Embed aspect ratio */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9/16 * 100) */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* CSS cho hiệu ứng đếm số */
+        .counter-highlight {
+            transition: color 0.3s;
+        }
+        .bg-program-green { background-color: var(--program-green); }
+        .text-program-green { color: var(--program-green); }
+        .border-program-green { border-color: var(--program-green); }
+        
+        .bg-elmich-blue { background-color: var(--elmich-blue); }
+        .text-elmich-blue { color: var(--elmich-blue); }
+        
+        .bg-cauvong-yellow { background-color: var(--cauvong-yellow); }
+        .text-cauvong-yellow { color: var(--cauvong-yellow); }
+        
+        .hover-bg-program-green-dark:hover { background-color: #16a34a; }
+        .hover-bg-cauvong-yellow-dark:hover { background-color: #eab308; }
+
+        /* Hiệu ứng cho thẻ tin tức */
+        .news-card:hover img {
+            transform: scale(1.05);
+        }
+        .news-card img {
+            transition: transform 0.3s ease-in-out;
+        }
+        .logo-doitac { 
+            height:100%!important;
+            max-width: none !important;
+        }
+	@media (max-width: 768px) {
+    	.logo-doitac {
+		height: 60% !important;
+			}
+        }
+       .line-clamp-2-custom {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; 
+            min-height: 3rem; 
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <!-- Header & Top Bar ( giữ nguyên ) -->
+    <header class="shadow-md bg-white sticky top-0 z-50">
+       <!-- Main Navigation (Đã được chỉnh sửa) -->
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Thay đổi ở đây: Thêm justify-between để đẩy 2 cục ra xa nhau -->
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- CỤC 1: LOGO (Bên trái) -->
+                <!-- Thêm một div bọc 2 logo lại, dùng flex để 2 logo nằm ngang -->
+        <div class="flex items-center space-x-3 sm:space-x-6">
+            
+            <!-- Logo 1: Elmich -->
+            <div class="flex-shrink-0">
+                <a href="#" class="flex items-center hover:opacity-80 transition duration-300">
+                    <img src="https://elmich.vn/wp-content/uploads/2024/11/elmich-Logo-footer.png"
+                         onerror="this.src='../demo/elmich-logo.png'"
+                         alt="Elmich Logo" 
+                         class="h-10 sm:h-14 mr-3 object-contain"
+                    >
+                </a>
+            </div>
+
+            <!-- Dấu phân cách (chỉ hiển thị trên mobile) -->
+            <div class="border-l border-gray-300 h-10 sm:hidden"></div>
+
+            <!-- Logo 2: Bộ Giáo dục và Đào tạo (Sử dụng placeholder) -->
+            <div class="flex-shrink-0">
+                <a href="#" class="flex items-center hover:opacity-80 transition duration-300">
+                    <img src="../demo/bgg-dt.png"
+                         onerror="this.src='../demo/bgg-dt.png'"
+                         alt="Bộ giáo dục và đào tạo Logo" 
+                         class="h-10 sm:h-14 object-contain"
+                    >
+                </a>
+            </div>
+
+        </div>
+                <!-- CỤC 2: MENU (Bên phải) -->
+                <!-- Thêm một div bọc menu desktop và nút mobile lại -->
+                <div>
+                    <!-- Desktop Menu -->
+                    <div class="hidden lg:flex lg:ml-6 space-x-6 font-semibold text-sm">
+                        <a href="#gioi-thieu" class="header-nav-link">Giới thiệu</a>
+                        <a href="#hoat-dong" class="header-nav-link">Hoạt động</a>
+                        <a href="#hanh-trinh" class="header-nav-link">Hành trình</a>
+                        <a href="#san-pham" class="header-nav-link">Sản phẩm</a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="lg:hidden">
+                        <button id="mobile-menu-button" class="text-gray-800 hover:text-[#8cc63f] focus:outline-none">
+                            <i data-lucide="menu" class="icon w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#gioi-thieu" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Giới thiệu</a>
+                <a href="#hoat-dong" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Hoạt động</a>
+                <a href="#hanh-trinh" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Hành trình</a>
+                <a href="#san-pham" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Sản phẩm</a>
+            </div>
+        </div>
+    </header>
+    <!-- Hero Slider Section -->
+    <section id="hero-slider" class="relative overflow-hidden w-full h-[21vh] md:h-[90vh] bg-gray-900">
+        <div id="slider-track" class="slider-track h-full">
+            <!-- SLIDE 1: Go Green Save the Planet -->
+            <div id="slide-1" class="slide text-white">
+            </div>
+
+            <!-- SLIDE 2: Renewable Energy for Future -->
+            <div id="slide-2" class="slide text-white">
+            </div>
+            
+            <!-- SLIDE 3: Water Conservation is Key -->
+            <div id="slide-3" class="slide text-white">
+            </div>
+
+            <!-- SLIDE 4: Zero Waste Lifestyle -->
+            <div id="slide-4" class="slide text-white">
+            </div>
+            
+                        <!-- SLIDE 5: Zero Waste Lifestyle -->
+            <div id="slide-5" class="slide text-white">
+            </div>
+        </div>
+
+        <!-- Dot Indicators -->
+        <div id="slider-dots" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+            <!-- Dots will be populated by JS -->
+        </div>
+
+        <!-- Navigation Arrows (Optional) -->
+        <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-white bg-opacity-30 hover:bg-opacity-50 transition duration-300 z-20 hidden md:block">
+            <i data-lucide="chevron-left" class="w-6 h-6 text-white"></i>
+        </button>
+        <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-white bg-opacity-30 hover:bg-opacity-50 transition duration-300 z-20 hidden md:block">
+            <i data-lucide="chevron-right" class="w-6 h-6 text-white"></i>
+        </button>
+    </section>
+    <!-- END Hero Slider Section -->
+
+
+    <!-- Start: Media/Press Section -->
+    <section class="max-w-7xl mx-auto py-12 md:py-20 text-center">
+        
+        <!-- Tiêu đề chính -->
+        <div class="mb-12">
+            <h2 class="text-xl md:text-2xl font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                BẢO TRỢ & TRUYỀN THÔNG
+            </h2>
+            <p class="text-3xl md:text-4xl font-extrabold text-[#005c99] leading-tight">
+                <span class="text-green-600">BAN TỔ CHỨC</span>
+            </p>
+        </div>
+
+        <!-- Vùng chứa Logo -->
+        <!-- Sử dụng Grid để tạo bố cục responsive -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 items-center justify-items-center">
+            
+            <!-- Logo 1: VNEXPRESS -->
+            <div class="p-3">
+                <!-- Trong thực tế, bạn sẽ dùng thẻ <img> với URL logo thật -->
+                <!-- Tôi sử dụng placeholder/SVG mô phỏng cấu trúc logo -->
+                <div class="h-16 w-32 md:w-40 flex items-center justify-center">
+					<img src="../demo/elmich-logo.png" alt="Elmich Logo" class="mr-2 logo-doitac">
+                </div>
+            </div>
+
+            <!-- Logo 2: 24H -->
+            <div class="p-3">
+                <div class="h-16 w-32 md:w-40 flex items-center justify-center">
+					<img src="../demo/bgg-dt.png" alt="Elmich Logo" class="mr-2 logo-doitac">
+                </div>
+            </div>
+
+            <!-- Logo 3: CAFEF -->
+            <div class="p-3">
+                <div class="h-16 w-32 md:w-40 flex items-center justify-center">
+					<img src="../demo/giao-duc-thoi-dai.png" alt="Elmich Logo" class="mr-2 logo-doitac">
+                </div>
+            </div>
+
+            <!-- Logo 4: DÂN TRÍ -->
+            <div class="p-3">
+                <div class="h-16 w-32 md:w-40 flex flex-col items-center justify-center">
+					<img src="../demo/cau-vong.png" alt="Elmich Logo" class="mr-2 logo-doitac">
+                </div>
+            </div>
+        </div>
+        
+    </section>
+    <!-- End: Media/Press Section -->
+    
+    <!-- 1. About/Feature Introduction Section (Bố cục Video và Text) -->
+    <section class="py-20 bg-[#f0f9eb] text-center" id="gioi-thieu">
+        <div class="max-w-4xl mx-auto px-4">
+            <!-- Hiệu ứng đếm số liệu -->
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+                Dự án "Học đường xanh - Gieo mầm tương lai"
+            </h2>
+            <p class="text-gray-500 max-w-3xl mx-auto mb-12">
+                Đây là hành trình Elmich đồng hành cùng thầy cô và học sinh lan tỏa lối sống xanh, vun đắp ý thức bảo vệ môi trường từ những điều nhỏ nhất. Từ lớp học hôm nay, chúng ta cùng gieo những hạt mầm xanh cho một tương lai bền vững mai sau.
+            </p>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 items-center text-left">
+                <!-- Video Nhúng Youtube -->
+                <div class="video-container">
+                    <!-- Thay thế URL bằng video Youtube của bạn -->
+                    <iframe 
+                        src="https://www.youtube.com/embed/CFwB4vanrQk?controls=0&modestbranding=1&rel=0" 
+                        title="Embedded YouTube Video" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                        loading="lazy"
+                    ></iframe>
+                </div>
+
+			<a href="#hoat-dong" class="block max-w-xl btn-primary text-white font-semibold rounded-full shadow-lg text-center mx-auto py-3 px-6 mt-3">Cùng Elmich phủ xanh trường học</a>
+                </div>
+            </div>
+    </section>
+    <!-- END CẬP NHẬT: About/Feature Introduction Section -->
+    
+    <!-- Donation/CTA Section ( giữ nguyên ) -->
+    <section class="py-20 text-center" >
+        <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">
+                    Cách Thức <span class="text-green-600">Tham Gia</span>
+                </h2>
+                <p class="mt-4 text-xl text-green-700 font-semibold italic">
+                    "Với mỗi đơn hàng từ 1 triệu đồng - 1 cây xanh được gieo trồng."
+                </p>
+
+            <!-- Donation Blocks -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-3">
+                <!-- Block 1: Donate Now -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-[#8cc63f] transition duration-300 hover:shadow-2xl">
+                    <div class="w-16 h-16 bg-[#8cc63f] rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">Bước 1: Ươm Mầm</h4>
+                    <p class="text-sm text-gray-500 mb-4">
+                        Mua sản phẩm của Elmich có giá trị từ 1 triệu đồng là bạn đã chung tay góp 1 cây xanh.
+                    </p>
+                </div>
+
+                <!-- Block 2: Sponsor Projects -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-[#8cc63f] transition duration-300 hover:shadow-2xl">
+                    <div class="w-16 h-16 bg-[#8cc63f] rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">Bước 2: Nhận Xanh</h4>
+                    <p class="text-sm text-gray-500 mb-4">
+                        Nhận chứng nhận & chia sẻ để cùng Elmich phủ xanh học đường Việt Nam.(Certificate online cho mỗi đơn hàng thành công)
+                    </p>
+                </div>
+
+                <!-- Block 3: Be a Volunteer -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-[#8cc63f] transition duration-300 hover:shadow-2xl">
+                    <div class="w-16 h-16 bg-[#8cc63f] rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">Bước 3: Trồng Yêu Thương</h4>
+                    <p class="text-sm text-gray-500 mb-4">
+                        Theo dõi hành trình cây của bạn lớn lên tại Hành trình xanh.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Latest News Section ( giữ nguyên ) -->
+    <section class="py-20 bg-[#f0f9eb]" id="tin-tuc" >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xl font-bold tracking-wider text-[#8cc63f] mb-3 uppercase text-center">Cập Nhật</h2>
+            <h3 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-12 text-center">
+                Hành trình Xanh
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- News Card 1 -->
+				<a href="https://vnexpress.net/elmich-viet-nam-khoi-dong-chien-dich-hoc-duong-xanh-4954272.html" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden relative">
+                    <img src="../demo/hoc-duong-xanh-1.jpg" alt="khởi động chiến dịch 'Học đường xanh'" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-2 hover:text-[#8cc63f] transition duration-300">
+                            Elmich Việt Nam khởi động chiến dịch 'Học đường xanh'
+                        </h4>
+                        <div class="text-xs text-gray-500 flex items-center space-x-4">
+                            <span class="flex items-center"><i data-lucide="user" class="icon w-3 h-3 mr-1"></i>VnExpress</span>
+                            <span class="flex items-center"><i data-lucide="calendar" class="icon w-3 h-3 mr-1"></i>22/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+				</a>
+
+                <!-- News Card 2 -->
+				<a href="https://vietnamnet.vn/elmich-viet-nam-chung-tay-vun-dap-the-he-hoc-sinh-song-khoe-song-xanh-2453850.html" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden relative">
+                    <img src="../demo/hoc-duong-xanh-2.jpeg" alt="gieo mầm ý thức Sống Khỏe - Sống Xanh" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-2 hover:text-[#8cc63f] transition duration-300">
+                            Cầu Vồng Tuổi thơ và Elmich Việt Nam gieo mầm ý thức Sống Khỏe - Sống Xanh
+                        </h4>
+                        <div class="text-xs text-gray-500 flex items-center space-x-4">
+                            <span class="flex items-center"><i data-lucide="user" class="icon w-3 h-3 mr-1"></i>Cầu Vòng Tuổi Thơ</span>
+                            <span class="flex items-center"><i data-lucide="calendar" class="icon w-3 h-3 mr-1"></i> 17/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+				</a>
+                <!-- News Card 3 -->
+				<a href="https://cauvongtuoitho.vn/hoc-tap-ngoai-khoa/cau-vong-tuoi-tho-va-elmich-viet-nam-gieo-mam-y-thuc-song-khoe-song-xanh" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden relative">
+                    <img src="../demo/hoc-duong-xanh-3.jpg" alt="chung tay vun đắp thế hệ học sinh ‘sống khỏe sống xanh’" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-2 hover:text-[#8cc63f] transition duration-300">
+                            Elmich Việt Nam chung tay vun đắp thế hệ học sinh ‘sống khỏe sống xanh’
+                        </h4>
+                        <div class="text-xs text-gray-500 flex items-center space-x-4">
+                            <span class="flex items-center"><i data-lucide="user" class="icon w-3 h-3 mr-1"></i>Vietnam Net</span>
+                            <span class="flex items-center"><i data-lucide="calendar" class="icon w-3 h-3 mr-1"></i> 17/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+				</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tree Section -->
+    <section class="relative pt-16 pb-20 overflow-hidden bg-gray-50/50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center lg:justify-between">
+            
+            <!-- Nội dung Chính -->
+            <div class="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">
+                    Cách Thức <span class="text-green-600">Tham Gia</span>
+                </h2>
+                <p class="mt-4 text-xl text-green-700 font-semibold italic">
+                    "Với mỗi đơn hàng từ 1 triệu đồng - 1 cây xanh được gieo trồng."
+                </p>
+                <p class="mt-6 mb-8 text-lg text-gray-600 max-w-lg lg:max-w-full mx-auto">
+					Cảm ơn bạn đã đồng hành cùng Elmich trên hành trình xanh hôm nay.
+                </p>
+
+                <!-- CTA Mua hàng -->
+                <a href="#san-pham" class="mt-8 btn-primary text-white font-semibold py-4 px-8 rounded-full shadow-lg text-sm">
+                    GÓP CÂY NGAY!
+                </a>
+            </div>
+
+            <!-- Đồng hồ Đếm cây (Tree Counter) -->
+            <div class="lg:w-1/2 w-full flex justify-center lg:justify-end">
+                <div id="tree-counter-card" class="tree-counter-bg text-white p-8 sm:p-10 rounded-3xl w-full max-w-sm lg:max-w-md text-center">
+                    <p class="text-xl sm:text-2xl font-semibold mb-4 opacity-90">Mục tiêu Giai đoạn 1</p>
+                    <div class="text-4xl sm:text-4xl font-black mb-4 flex items-center justify-center space-x-2">
+                        <span id="tree-count" class="animate-pulse">0</span>
+                        <span class="text-yellow-300">🌱</span>
+                    </div>
+                    <p class="text-xl sm:text-2xl font-bold uppercase tracking-wider">Cây đã được quy đổi</p>
+                    <p class="mt-4 text-sm opacity-80">
+                        (Cập nhật Real-time từ các đơn hàng Elmich. Cùng nhau chạm mốc 100.000!)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <!-- NEW PRODUCT SHOWCASE SECTION ( giữ nguyên ) -->
+    <section class="py-20 bg-gray-100" id="san-pham">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-12 text-center">Sản phẩm Xanh - Nhà máy Xanh</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Product Card 1 -->
+				<a href="https://shop.elmich.vn/bo-noi-chong-dinh-ceramic-elmich-harmony-el5246pt01-size-18-20-24cm" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://bizweb.dktcdn.net/100/489/006/products/el5246pt01-1.jpg" alt="Bộ nồi chống dính Ceramic Elmich Harmony EL5246PT01 Size 18, 20, 24cm " class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Bộ nồi chống dính Ceramic Elmich Harmony EL5246PT01 Size 18, 20, 24cm </h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div> </a>
+
+                <!-- Product Card 2 -->
+				<a href="https://shop.elmich.vn/bo-noi-chong-dinh-ceramic-elmich-mocha-el5243mc04-size-18-20-24-quanh-16cm" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="http://bizweb.dktcdn.net/100/489/006/products/el5243mc04-11.jpg" alt="Bộ nồi chống dính Ceramic Elmich Mocha EL5243MC04 Size 18,20,24, quánh 16cm " class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Bộ nồi chống dính Ceramic Elmich Mocha EL5243MC04 Size 18,20,24, quánh 16cm </h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+
+                <!-- Product Card 3 -->
+				<a href="https://shop.elmich.vn/tu-say-quan-ao-elmich-cde-8641" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2024/10/Artboard-1.jpg" alt="Tủ sấy quần áo Elmich CDE-8641" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Tủ sấy quần áo Elmich CDE-8641</h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+
+                <!-- Product Card 4 -->
+				<a href="https://shop.elmich.vn/may-loc-khong-khi-elmich-ape9323" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2025/08/APE9323-Web-1000x1000-2.jpg" alt="Máy lọc không khí Elmich APE9323" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Máy lọc không khí Elmich APE9323</h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+
+                <!-- Product Card 5 -->
+				<a href="https://shop.elmich.vn/may-loc-khong-khi-ion-elmich-ape9325" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2025/08/Artboard-12-2.jpg" alt="Máy lọc không khí Elmich APE9325" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Máy lọc không khí Elmich APE9325</h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div> </a>
+
+                <!-- Product Card 6 -->
+				<a href="https://shop.elmich.vn/noi-com-dien-tu-elmich-1-8l-rce9131gr" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2025/09/4029131GR-01.jpg" alt="Nồi cơm điện tử Elmich 1.8L RCE9131GR" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Nồi cơm điện tử Elmich 1.8L RCE9131GR</h4>
+
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+
+                <!-- Product Card 7 -->
+				<a href="https://shop.elmich.vn/bep-dien-tu-elmich-ice9300" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2025/09/Artboard-3-25.jpg" alt="Bếp điện từ Elmich ICE9300" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Bếp điện từ Elmich ICE9300</h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+
+                <!-- Product Card 8 -->
+				<a href="https://shop.elmich.vn/may-say-bat-elmich-dde1303" >
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl group">
+                    <div class="relative overflow-hidden">
+                        <img src="https://elmich.vn/wp-content/uploads/2025/10/Artboard-6-6.jpg" alt="Máy sấy bát Elmich DDE1303" class="w-full h-50 object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2-custom">Máy sấy bát Elmich DDE1303</h4>
+                        <button class="w-full bg-[#4c960c] text-white text-sm font-semibold py-2 rounded-full hover:bg-[#8cc63f] transition duration-300 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="icon mr-2 w-4 h-4"></i>
+                            Mua Ngay
+                        </button>
+                    </div>
+                </div></a>
+            </div>
+			<!-- CTA -->
+            <p class="text-xl font-bold tracking-wider text-[#8cc63f] mt-3 text-center">
+                Mỗi đơn hàng – Một hành động vì hành tinh xanh.
+            </p>
+        </div>
+    </section>
+    <!-- END NEW PRODUCT SHOWCASE SECTION -->
+
+    <!-- Section ĐỐI TÁC ĐỒNG HÀNH (Partners) -->
+    <section class="py-16 bg-white" id="doi-tac" >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-xl font-bold tracking-wider text-[#8cc63f] mb-3 uppercase">TRƯỜNG HỌC XANH</h2>
+            <h3 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-12">
+                Các trường học tham gia chương trình
+            </h3>
+
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-8 items-center">
+                <!-- Logo 1 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://bizweb.dktcdn.net/100/311/933/themes/659772/assets/logo.png?1760932589559" alt="Cầu vồng" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+                <!-- Logo 2 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://cdn.giaoducthoidai.vn/assets/web/styles/img/logo.svg" alt="Giáo dục thời đại" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+                <!-- Logo 3 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://moet.gov.vn/upload/2007219/20251016/logo_7218c.png" alt="Bộ giáo dục" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+                <!-- Logo 4 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://mzv.gov.cz/public/21/69/4e/690037_592981_hanoi_vi.png" alt="Đại sứ quán CH Séc" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+                <!-- Logo 5 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://elmich.vn/wp-content/uploads/2024/11/elmich-Logo-footer.png" alt="Elmich" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+                <!-- Logo 6 -->
+                <div class="opacity-70 hover:opacity-100 transition duration-300 transform hover:scale-105">
+                    <img src="https://placehold.co/200x80/f7f7f7/000000?text=Global+Trust" alt="Partner Logo 6" class="w-full h-auto max-h-20 object-contain mx-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END: Section ĐỐI TÁC ĐỒNG HÀNH -->
+
+    <!-- 
+      FOOTER SECTION
+      Tôi đã dùng màu bg-[#D8222E] để khớp với màu đỏ trong ảnh của bạn.
+    -->
+    <footer class="bg-[#D8222E] text-white py-12 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Lưới chính cho 4 cột đầu -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                
+                <!-- Cột 1: Thông tin liên hệ & Nhà máy -->
+                <div class="space-y-4">
+                    <h3 class="font-bold text-base uppercase mb-5">Thông tin liên hệ</h3>
+                    <p class="leading-relaxed">
+                        <strong>CSKH:</strong> 1900.63.69.25<br>
+                        <strong>Website:</strong> https://elmich.vn<br>
+                        <strong>Thời gian làm việc:</strong> 8h00-21h00 Từ thứ 2 đến thứ 7 hàng tuần (trừ ngày lễ theo quy định)
+                    </p>
+                    
+                    <h3 class="font-bold text-base uppercase pt-5 mb-5">Nhà máy Elmich Việt Nam</h3>
+                    <p class="leading-relaxed">
+                        <strong>Địa chỉ:</strong> Đường Ngô Gia Bảy, Tổ dân phố Ân Thái, Xã Bình Mỹ, Tỉnh Ninh Bình, Việt Nam<br>
+                        <strong>Số điện thoại:</strong> (0229)371 6888
+                    </p>
+					<h3 class="font-bold text-base uppercase mb-4">Tập đoàn Elmich – Trụ sở Cộng hòa Séc</h3>
+					<p class="leading-relaxed">
+						<strong>Địa chỉ:</strong> U Hrubku 1570 Ostrava Nova Ves 70900, Czech Republic<br>
+						<strong>Số điện thoại:</strong> 00420 59 678 6888<br>
+						<strong>Website:</strong> www.elmichgroup.eu
+                </p>
+
+                </div>
+
+                <!-- Cột 2: Văn phòng Hà Nội & TPHCM -->
+                <div class="space-y-4">
+                    <h3 class="font-bold text-base uppercase mb-5">Văn phòng tại Hà Nội</h3>
+                    <p class="leading-relaxed">
+                        <strong>Địa chỉ:</strong> Tầng 17, tòa nhà 319 Bộ Quốc Phòng, Số 63 Lê Văn Lương, phường Yên Hòa, thành phố Hà Nội<br>
+                        <strong>Số điện thoại:</strong> (024) 3513 4657
+                    </p>
+                    
+                    <h3 class="font-bold text-base uppercase pt-5 mb-5">Văn phòng tại TPHCM</h3>
+                    <p class="leading-relaxed">
+                        <strong>Địa chỉ:</strong> Tầng 3, số 402 Huỳnh Văn Bánh, P. Phú Nhuận, TP.HCM<br>
+                        <strong>Số điện thoại:</strong> (028)3810 6988
+                    </p>
+                </div>
+
+                <!-- Cột 3: Dành cho khách hàng -->
+                <div class="space-y-2">
+                    <h3 class="font-bold text-base uppercase mb-5">Dành cho khách hàng</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:underline">Hệ thống Showroom</a></li>
+                        <li><a href="#" class="hover:underline">Shopping Online</a></li>
+                        <li><a href="#" class="hover:underline">Điểm bảo hành</a></li>
+                        <li><a href="#" class="hover:underline">Giới thiệu về ELMICH</a></li>
+                        <li><a href="#" class="hover:underline">Chính sách trách nhiệm xã hội</a></li>
+                        <li><a href="#" class="hover:underline">Chứng nhận sản phẩm</a></li>
+                        <li><a href="#" class="hover:underline">Chính sách bảo hành</a></li>
+                        <li><a href="#" class="hover:underline">Chính sách bảo mật thông tin</a></li>
+                        <li><a href="#" class="hover:underline">Tra cứu/kích hoạt bảo hành</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cột 4: Hotline, BCT, Mạng xã hội -->
+                <div class="space-y-6">
+                    <!-- Hotline -->
+                    <div>
+                        <a href="tel:1900636925" class="border-2 border-white rounded-full px-5 py-3 inline-flex items-center space-x-3 group hover:bg-white hover:text-[#D8222E] transition-colors duration-300">
+                            <i data-lucide="phone" class="w-6 h-6 icon"></i>
+                            <span class="font-bold text-base">HOTLINE: 1900.6369.25</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Social Icons -->
+				<div class="ft_social d-flex">
+						<ul style="display: block; float: left; width: 100%; position: relative">
+                                                                                    <li style="display: block; float: left">
+                                    <a href="https://www.facebook.com/ElmichVietNam/" target="_blank" class="item">
+                                        <img src="https://elmich.vn/wp-content/uploads/2023/10/fb.png" alt="social">
+                                    </a>
+                                </li>
+                                                            <li style="display: block; float: left">
+                                    <a href="https://www.youtube.com/channel/UCoX_-9w-sMjPPScHr4xRa7w/" target="_blank" class="item">
+                                        <img src="https://elmich.vn/wp-content/uploads/2023/10/ytb.png" alt="social">
+                                    </a>
+                                </li>
+                                                            <li style="display: block; float: left">
+                                    <a href="https://www.tiktok.com/@elmichvn" target="_blank" class="item">
+                                        <img src="https://elmich.vn/wp-content/uploads/2023/10/tiktok.png" alt="social">
+                                    </a>
+                                </li>
+                                                            <li style="display: block; float: left">
+                                    <a href="https://zalo.me/elmichvn" target="_blank" class="item">
+                                        <img src="https://elmich.vn/wp-content/uploads/2023/10/zalo.png" alt="social">
+                                    </a>
+                                </li>
+                                                    						</ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-800 mt-10 pt-4 text-center text-sm text-white">
+                Copyright © 2025 Elmich. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu and Slider -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Khởi tạo tất cả các icon Lucide
+            lucide.createIcons();
+
+            // 1. Logic cho Mobile Menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // 2. Logic cho Hero Slider
+            const sliderTrack = document.getElementById('slider-track');
+            const sliderDotsContainer = document.getElementById('slider-dots');
+            const prevButton = document.getElementById('prev-slide');
+            const nextButton = document.getElementById('next-slide');
+            const slides = document.querySelectorAll('.slide');
+            const totalSlides = slides.length;
+            let currentSlide = 0;
+            let slideInterval;
+
+            if (sliderTrack) {
+                // Tạo các chấm chỉ báo (dots)
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('button');
+                    dot.classList.add('dot-indicator', 'w-2', 'h-2', 'rounded-full', 'bg-white', 'bg-opacity-50', 'transition-all', 'duration-300', 'hover:bg-opacity-80', 'focus:outline-none');
+                    dot.setAttribute('data-slide-index', i);
+                    dot.addEventListener('click', () => {
+                        moveToSlide(i);
+                        resetAutoSlide();
+                    });
+                    sliderDotsContainer.appendChild(dot);
+                }
+
+                const dots = document.querySelectorAll('.dot-indicator');
+
+                // Hàm chuyển đổi slide
+                const moveToSlide = (index) => {
+                    if (index < 0) {
+                        currentSlide = totalSlides - 1;
+                    } else if (index >= totalSlides) {
+                        currentSlide = 0;
+                    } else {
+                        currentSlide = index;
+                    }
+                    
+                    // Tính toán và áp dụng phép dịch chuyển ngang
+                    const offset = -currentSlide * 100;
+                    sliderTrack.style.transform = `translateX(${offset}%)`;
+
+                    // Cập nhật các chấm chỉ báo
+                    dots.forEach((dot, i) => {
+                        dot.classList.remove('active', 'bg-opacity-100');
+                        if (i === currentSlide) {
+                            dot.classList.add('active', 'bg-opacity-100');
+                        }
+                    });
+                };
+
+                // Hàm tự động chuyển slide
+                const startAutoSlide = () => {
+                    slideInterval = setInterval(() => {
+                        moveToSlide(currentSlide + 1);
+                    }, 5000); // Tự động trượt sau 5 giây
+                };
+
+                // Hàm đặt lại bộ đếm tự động
+                const resetAutoSlide = () => {
+                    clearInterval(slideInterval);
+                    startAutoSlide();
+                };
+
+                // Gắn sự kiện cho nút điều hướng
+                nextButton.addEventListener('click', () => {
+                    moveToSlide(currentSlide + 1);
+                    resetAutoSlide();
+                });
+
+                prevButton.addEventListener('click', () => {
+                    moveToSlide(currentSlide - 1);
+                    resetAutoSlide();
+                });
+
+                // Khởi động slider ban đầu
+                moveToSlide(0);
+                startAutoSlide();
+            }
+
+            // 3. Logic cho Counter Animation (Hiệu ứng đếm số liệu)
+            const countElement = document.getElementById('volunteer-count');
+            const targetNumber = parseInt(countElement.getAttribute('data-target'));
+            const duration = 2000; // 2 giây
+            let startTime = null;
+
+            // Hàm đếm số
+            const animateCount = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = timestamp - startTime;
+                const percentage = Math.min(progress / duration, 1);
+                const currentCount = Math.floor(percentage * targetNumber);
+
+                countElement.textContent = currentCount.toLocaleString(); // Định dạng số
+
+                if (percentage < 1) {
+                    requestAnimationFrame(animateCount);
+                } else {
+                    countElement.textContent = targetNumber.toLocaleString();
+                }
+            };
+            
+            // Theo dõi vị trí cuộn để bắt đầu hiệu ứng khi section xuất hiện
+            const counterSection = countElement.closest('section');
+            let hasAnimated = false;
+
+            const checkVisibility = () => {
+                if (counterSection && !hasAnimated) {
+                    const rect = counterSection.getBoundingClientRect();
+                    // Bắt đầu animation khi phần tử đi vào viewport (2/3 chiều cao màn hình)
+                    if (rect.top < (window.innerHeight * 0.75) && rect.bottom > 0) {
+                        hasAnimated = true;
+                        requestAnimationFrame(animateCount);
+                        // Xóa sự kiện lắng nghe sau khi đã chạy
+                        window.removeEventListener('scroll', checkVisibility);
+                    }
+                }
+            };
+
+            window.addEventListener('scroll', checkVisibility);
+            // Kiểm tra ngay lần đầu load trang
+            checkVisibility();
+        });
+    </script>
+        <!-- Script cho Tree Counter (chỉ mô phỏng) -->
+    <script>
+        // --- Logic mô phỏng Đồng hồ đếm cây ---
+        const targetCount = 100000;
+        let currentCount = 0; // Số cây ban đầu (có thể lấy từ API thực tế)
+        const countElement = document.getElementById('tree-count');
+
+        // Hàm cập nhật số cây (mô phỏng, trong thực tế sẽ lấy dữ liệu từ server)
+        function updateTreeCount() {
+            // Tăng số lượng cây ngẫu nhiên để mô phỏng sự tăng trưởng real-time
+            const randomIncrease = Math.floor(Math.random() * 50) + 1; 
+            currentCount = Math.min(currentCount + randomIncrease, targetCount);
+
+            // Định dạng số có dấu phẩy
+            countElement.textContent = currentCount.toLocaleString('en-US');
+
+            if (currentCount < targetCount) {
+                // Tăng tốc độ cập nhật khi gần đạt mục tiêu
+                const delay = currentCount > 8000 ? 50 : 200; 
+                setTimeout(updateTreeCount, delay);
+            } else {
+                // Khi đạt mục tiêu
+                countElement.textContent = targetCount.toLocaleString('en-US') + ' 🎉';
+            }
+        }
+
+        // Bắt đầu đếm khi trang được tải
+        document.addEventListener('DOMContentLoaded', () => {
+            // Khởi tạo một số ngẫu nhiên ban đầu cho đẹp mắt (ví dụ 3500 - 4500)
+            currentCount = Math.floor(Math.random() * 1000) + 3500; 
+            updateTreeCount();
+        });
+        
+    </script>
+</body>
+</html>
